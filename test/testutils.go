@@ -298,8 +298,10 @@ func commitAtDate(atDate time.Time, committerName, committerEmail, msg string) e
 	// set GIT_COMMITTER_DATE environment var e.g. "Fri Jun 21 20:26:41 2013 +0900"
 	if atDate.IsZero() {
 		env = append(env, "GIT_COMMITTER_DATE=")
+		env = append(env, "GIT_AUTHOR_DATE=")
 	} else {
 		env = append(env, fmt.Sprintf("GIT_COMMITTER_DATE=%v", git.FormatGitDate(atDate)))
+		env = append(env, fmt.Sprintf("GIT_AUTHOR_DATE=%v", git.FormatGitDate(atDate)))
 	}
 	cmd.Env = env
 	out, err := cmd.CombinedOutput()
@@ -352,6 +354,7 @@ func (repo *Repo) AddCommits(inputs []*CommitInput) []*CommitOutput {
 			infile.AddToIndex(output, repo)
 		}
 		// Now commit
+		fmt.Printf("Test commit: %v\n", input.CommitDate)
 		err = commitAtDate(input.CommitDate, input.CommitterName, input.CommitterEmail,
 			fmt.Sprintf("Test commit %d", i))
 		if err != nil {
